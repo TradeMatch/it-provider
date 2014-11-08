@@ -1,0 +1,24 @@
+package org.itrade.benzinga;
+
+import org.itrade.ProviderApplication;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.time.LocalDate;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = ProviderApplication.class)
+public class BenzingaServiceTest {
+
+    @Autowired
+    private BenzingaService benzingaService;
+
+    @Test
+    public void should_update_ratings() {
+        benzingaService.updateRatings(LocalDate.of(2014, 11, 5));
+    }
+
+}

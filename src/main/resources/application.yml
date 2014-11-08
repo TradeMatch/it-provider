@@ -1,0 +1,15 @@
+server:
+  port: 8092
+
+mongo:
+  configuration:
+    host: "localhost"
+
+  db:
+    name: "itProvider"
+    collection:
+      ratings: "ratings"
+
+benzinga:
+  token:
+    file: "/Users/dimapod/benzinga.token"
