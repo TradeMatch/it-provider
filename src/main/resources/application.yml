@@ -13,3 +13,8 @@ mongo:
 benzinga:
   token:
     file: "/Users/dimapod/benzinga.token"
+
+quartz:
+  job:
+    rating:
+      cron: "*/2 * * * * ?"
