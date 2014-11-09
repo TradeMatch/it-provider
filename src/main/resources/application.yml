@@ -17,4 +17,4 @@ benzinga:
 quartz:
   job:
     rating:
-      cron: "*/2 * * * * ?"
+      cron: "*/20 * * * * ?"

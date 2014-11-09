@@ -17,8 +17,12 @@ public class BenzingaServiceTest {
     private BenzingaService benzingaService;
 
     @Test
-    public void should_update_ratings() {
+    public void should_update_today_ratings() {
         benzingaService.updateRatings(LocalDate.of(2014, 11, 5));
     }
 
+    @Test
+    public void should_update_range_ratings() {
+        benzingaService.updateRatings(LocalDate.of(2014, 11, 1), LocalDate.of(2014, 11, 7));
+    }
 }

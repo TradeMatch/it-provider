@@ -1,8 +1,11 @@
 package org.itrade.benzinga.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import org.itrade.benzinga.BenzingaException;
 import org.itrade.benzinga.beans.BenzingaRatings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +25,10 @@ import java.util.HashMap;
 
 @Service
 public class BenzingaClient {
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     private static final String benzingaCalendarUrl = "http://api.benzinga.com/api/v2/calendar/{method}";
-    private Integer pageSize = null;
+    private int pageSize = 50;
 
     @Autowired
     private TokenResolver tokenResolver;
@@ -45,6 +50,8 @@ public class BenzingaClient {
                 .queryParam("parameters[date_from]", "{date_from}")
                 .queryParam("parameters[date_to]", "{date_to}")
                 .queryParam("token", token)
+                .queryParam("pagesize", pageSize)
+                .queryParam("page", "{page}")
                 .build();
         prepareHeaders();
         mapper = new ObjectMapper();
@@ -56,10 +63,25 @@ public class BenzingaClient {
     }
 
     public BenzingaRatings getRatings(LocalDate from, LocalDate to) {
+        BenzingaRatings resultRatings = new BenzingaRatings();
+
+        int page = 0;
+        BenzingaRatings ratings;
+        do {
+            ratings = getRatingsInternal(from, to, page++);
+            logger.debug(" page {}: {} ratings", page, ratings.getRatings().size());
+            resultRatings.getRatings().addAll(ratings.getRatings());
+        } while (ratings.getRatings().size() == pageSize);
+
+        return resultRatings;
+    }
+
+    protected BenzingaRatings getRatingsInternal(LocalDate from, LocalDate to, int page) {
         HashMap<String, String> params = new HashMap<>();
         params.put("method", CalendarMethods.ratings);
         params.put("date_from", from.format(DateTimeFormatter.ISO_DATE));
         params.put("date_to", to.format(DateTimeFormatter.ISO_DATE));
+        params.put("page", String.valueOf(page));
 
         URI uri = builder.expand(params).toUri();
         HttpEntity<String> response = restTemplate.exchange(
@@ -70,7 +92,9 @@ public class BenzingaClient {
 
     private BenzingaRatings deserialize(String json) {
         if (json == null || json.equals("[]")) {
-            return new BenzingaRatings();
+            BenzingaRatings benzingaRatings = new BenzingaRatings();
+            benzingaRatings.setRatings(Lists.newArrayList());
+            return benzingaRatings;
         }
 
         try {

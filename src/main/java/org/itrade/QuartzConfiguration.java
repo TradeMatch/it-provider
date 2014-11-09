@@ -1,5 +1,6 @@
 package org.itrade;
 
+import org.itrade.benzinga.RatingRefresherJob;
 import org.itrade.jobs.AutowiringSpringBeanJobFactory;
 import org.itrade.jobs.ExampleService;
 import org.quartz.Trigger;
@@ -32,7 +33,7 @@ public class QuartzConfiguration {
     @Bean
     public JobDetailFactoryBean jobDetailFactoryBean() {
         JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
-        jobDetailFactoryBean.setJobClass(ExampleService.class);
+        jobDetailFactoryBean.setJobClass(RatingRefresherJob.class);
         jobDetailFactoryBean.setDurability(true);
         jobDetailFactoryBean.setGroup("spring3-quartz");
         return jobDetailFactoryBean;
@@ -68,6 +69,9 @@ public class QuartzConfiguration {
 
     @Bean
     public Properties quartzProperties() {
+        logger.info("== INFO ===");
+        logger.debug("== DEBUG ===");
+        logger.warn("== WARN ===");
         PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
         propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
         Properties properties = null;

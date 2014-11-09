@@ -2,6 +2,7 @@ package org.itrade.benzinga.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -18,8 +19,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BenzingaRatings {
 
-
     public List<BenzingaRating> ratings;
+
+    public BenzingaRatings() {
+        ratings = new ArrayList<>();
+    }
 
     public List<BenzingaRating> getRatings() {
         return ratings;

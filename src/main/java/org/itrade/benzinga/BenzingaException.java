@@ -1,7 +1,9 @@
 package org.itrade.benzinga;
 
 /**
- * Created by dimapod on 07/11/14.
+ * Created by Dmytro Podyachiy on 07/11/14.
+ *
+ * Encapsulate Runtime exception
  */
 public class BenzingaException extends RuntimeException {
     public BenzingaException() {
