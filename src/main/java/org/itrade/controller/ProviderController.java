@@ -1,5 +1,6 @@
 package org.itrade.controller;
 
+import org.itrade.benzinga.BenzingaService;
 import org.itrade.benzinga.beans.BenzingaRating;
 import org.itrade.benzinga.resource.RatingsResource;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -18,25 +20,49 @@ public class ProviderController {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private RatingsResource ratingsResource;
+    private BenzingaService benzingaService;
 
     @RequestMapping("/")
     public String index() {
-        logger.info("Greetings from Spring Boot!!!");
         return "Greetings from Spring Boot!!!";
     }
 
     @RequestMapping("/ratings")
-    public List<BenzingaRating> getRatings(@RequestParam(required = false, defaultValue = "0") final int offset,
-                                   @RequestParam(required = false, defaultValue = "10") final int limit) {
-        return ratingsResource.getRatings(offset, limit);
+    public List<BenzingaRating> getRatings(
+            @RequestParam(required = false, defaultValue = "0") final int offset,
+            @RequestParam(required = false, defaultValue = "10") final int limit) {
+        return benzingaService.getRatings(offset, limit);
     }
 
     @RequestMapping("/ratings/{ticker}")
-    public List<BenzingaRating> getRatingsByTicker(@PathVariable("ticker") String ticker,
-                                           @RequestParam(required = false, defaultValue = "0") final int offset,
-                                           @RequestParam(required = false, defaultValue = "10") final int limit) {
-        return ratingsResource.getRatingsByTicker(ticker, offset, limit);
+    public List<BenzingaRating> getRatingsByTicker(
+            @PathVariable("ticker") String ticker,
+            @RequestParam(required = false, defaultValue = "0") final int offset,
+            @RequestParam(required = false, defaultValue = "10") final int limit) {
+        return benzingaService.getRatings(ticker, offset, limit);
+    }
+
+    @RequestMapping("/update/ratings")
+    public String updateRatings(
+            @RequestParam(value = "from", required = false) final String fromStr,
+            @RequestParam(value = "to", required = false) final String toStr) {
+
+        LocalDate from = null;
+        LocalDate to = null;
+
+        if (fromStr != null)
+            from = LocalDate.parse(fromStr);
+        if (toStr != null)
+            to = LocalDate.parse(toStr);
+
+        if (from == null)
+            from = LocalDate.now();
+        if (to == null)
+            from = LocalDate.now();
+        logger.debug("From {}, to {}", from, to);
+
+        int updated = benzingaService.updateRatings(from, to);
+        return "Ratings updated: " + updated;
     }
 
 }

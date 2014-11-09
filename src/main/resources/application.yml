@@ -14,7 +14,7 @@ benzinga:
   token:
     file: "/Users/dimapod/benzinga.token"
 
-quartz:
-  job:
-    rating:
-      cron: "*/20 * * * * ?"
+#quartz:
+#  job:
+#    rating:
+#      cron: "*/20 * * * * ?"

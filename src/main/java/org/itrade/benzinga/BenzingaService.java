@@ -1,5 +1,6 @@
 package org.itrade.benzinga;
 
+import org.itrade.benzinga.beans.BenzingaRating;
 import org.itrade.benzinga.beans.BenzingaRatings;
 import org.itrade.benzinga.client.BenzingaClient;
 import org.itrade.benzinga.resource.RatingsResource;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Created by Dmytro Podyachiy on 08/11/14.
@@ -22,6 +24,14 @@ public class BenzingaService {
 
     @Autowired
     private BenzingaClient benzingaClient;
+
+    public List<BenzingaRating> getRatings(int offset, int limit) {
+        return ratingsResource.getRatings(offset, limit);
+    }
+
+    public List<BenzingaRating> getRatings(String ticker, int offset, int limit) {
+        return ratingsResource.getRatingsByTicker(ticker, offset, limit);
+    }
 
     public int updateRatings(LocalDate localDate) {
         logger.info("Refresh Benzinga ratings for {}", localDate);
@@ -40,19 +50,13 @@ public class BenzingaService {
         if (to.isBefore(from)) {
             return 0;
         }
-
         LocalDate current = from;
-
+        int count = 0;
         do {
+            count += updateRatings(current);
             current = current.plusDays(1);
-
-            updateRatings(current);
-
-            System.out.println(current);
-        } while (current.isBefore(to));
-
-
-        return 0;
+        } while (!current.isAfter(to));
+        return count;
     }
 
 }
