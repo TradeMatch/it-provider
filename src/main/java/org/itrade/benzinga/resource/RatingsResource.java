@@ -5,10 +5,13 @@ import com.mongodb.Mongo;
 import org.itrade.benzinga.beans.BenzingaRating;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -16,6 +19,7 @@ import java.util.List;
  */
 @Service
 public class RatingsResource {
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private Mongo mongo;
@@ -25,6 +29,12 @@ public class RatingsResource {
 
     @Value("${mongo.db.collection.ratings:ratings}")
     private String collection;
+
+    @PostConstruct
+    private void init() {
+        logger.debug("RatingCollection: ensureIndexes");
+        getRatingCollection().ensureIndex("{updated: 1}", "{background: true}");
+    }
 
     private MongoCollection getRatingCollection() {
         return (new Jongo(mongo.getDB(this.dbName))).getCollection(this.collection);
