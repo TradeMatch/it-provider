@@ -1,20 +1,15 @@
 package org.itrade;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.quartz.JobDetailBean;
-import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.UnknownHostException;
-import java.util.Arrays;
 
 @Configuration
 public class ProviderConfiguration {
@@ -33,6 +28,13 @@ public class ProviderConfiguration {
     @Bean
     public RestTemplate restTemplate() throws UnknownHostException {
         return new RestTemplate();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        return objectMapper;
     }
 
 }

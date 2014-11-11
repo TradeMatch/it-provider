@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-
 /**
  * Created by Dmytro Podyachiy on 08/11/14.
  *
@@ -24,7 +22,7 @@ public class RatingRefresherJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        benzingaService.updateRatings(LocalDate.of(2014, 11, 7));
+        benzingaService.updateRatings();
     }
 
 }

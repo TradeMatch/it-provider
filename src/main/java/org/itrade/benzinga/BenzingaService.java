@@ -33,19 +33,44 @@ public class BenzingaService {
         return ratingsResource.getRatingsByTicker(ticker, offset, limit);
     }
 
+    /**
+     * Update Ratings starting from latest timestamp
+     *
+     * @return number of updated ratings
+     */
+    public int updateRatings() {
+        long latestTimestamp = ratingsResource.getLatestTimestamp();
+        logger.info("Refresh Benzinga ratings starting at timestamp {}", latestTimestamp+1);
+
+        // If no latest timestamp found, update last day
+        if (latestTimestamp == -1) {
+            return updateRatings(LocalDate.now());
+        }
+
+        // Update starting from timestamp
+        BenzingaRatings ratings = benzingaClient.getRatings(latestTimestamp+1);
+        return insertToDb(ratings);
+    }
+
+    /**
+     * Update 1 days ratings
+     *
+     * @param localDate date
+     * @return number of updated ratings
+     */
     public int updateRatings(LocalDate localDate) {
         logger.info("Refresh Benzinga ratings for {}", localDate);
         BenzingaRatings ratings = benzingaClient.getRatings(localDate, localDate);
-        if (ratings.getRatings().size() != 0) {
-            logger.debug("Got {} benzinga ratings. Updating DB ...", ratings.getRatings().size());
-            ratingsResource.upsertRatings(ratings.getRatings());
-            logger.debug(" ... done", ratings.getRatings().size());
-        } else {
-            logger.debug("No benzinga ratings found");
-        }
-        return ratings.getRatings().size();
+        return insertToDb(ratings);
     }
 
+    /**
+     * Update days range ratings
+     *
+     * @param from start date
+     * @param to   end date
+     * @return number of updated ratings
+     */
     public int updateRatings(LocalDate from, LocalDate to) {
         if (to.isBefore(from)) {
             return 0;
@@ -57,6 +82,17 @@ public class BenzingaService {
             current = current.plusDays(1);
         } while (!current.isAfter(to));
         return count;
+    }
+
+    private int insertToDb(BenzingaRatings ratings) {
+        if (ratings.getRatings().size() != 0) {
+            logger.debug("Got {} benzinga ratings. Updating DB ...", ratings.getRatings().size());
+            ratingsResource.upsertRatings(ratings.getRatings());
+            logger.debug(" ... done", ratings.getRatings().size());
+        } else {
+            logger.debug("No benzinga ratings found");
+        }
+        return ratings.getRatings().size();
     }
 
 }

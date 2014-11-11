@@ -2,92 +2,106 @@ package org.itrade.benzinga.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.jongo.marshall.jackson.oid.Id;
 import org.jongo.marshall.jackson.oid.ObjectId;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 /*
     {
-        "action_company": "Maintains",
-        "action_pt": "Raises",
-        "analyst": "CRT Capital",
-        "date": "2014-10-24",
-        "exchange": "NYSE",
-        "id": "544a6b974309aa04e2347907",
-        "importance": "",
-        "name": "American Airlines",
-        "pt_current": "54.000",
-        "pt_prior": "48.000",
-        "ptpo": "PT",
-        "rating_current": "Buy",
-        "rating_prior": "",
-        "ticker": "AAL",
+        "id": "545d289a4309aa04e234947b",
+        "date": "2014-11-07",
+        "url_calendar": "http://www.benzinga.com/stock/AAP/ratings",
+        "url_news": "http://www.benzinga.com/stock-articles/AAP/analyst-ratings",
         "time": "09:00:00",
-        "updated": 1414163372,
-        "url": "http://www.benzinga.com/stock/AAL/ratings",
-        "url_calendar": "http://www.benzinga.com/stock/AAL/ratings",
-        "url_news": "http://www.benzinga.com/stock-articles/AAL/analyst-ratings"
+        "ticker": "AAP",
+        "exchange": "NYSE",
+        "name": "Advance Auto Parts Inc",
+        "action_pt": "Raises",
+        "action_company": "Maintains",
+        "ptpo": "PT",
+        "analyst": "Citigroup",
+        "rating_current": "Neutral",
+        "pt_current": "145.000",
+        "rating_prior": "",
+        "pt_prior": "132.000",
+        "url": "http://www.benzinga.com/stock/AAP/ratings",
+        "importance": "",
+        "updated": 1415391404
     }
+
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BenzingaRating {
 
     @Id @ObjectId
     @JsonProperty("id")
-    public String id;
+    private String id;
 
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonProperty("date")
-    public String date;
+    private LocalDate date;
 
     @JsonProperty("url_calendar")
-    public String urlCalendar;
+    private String urlCalendar;
 
     @JsonProperty("url_news")
-    public String urlNews;
+    private String urlNews;
 
+    @JsonSerialize(using = LocalTimeSerializer.class)
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
     @JsonProperty("time")
-    public String time;
+    private LocalTime time;
 
     @JsonProperty("ticker")
-    public String ticker;
+    private String ticker;
 
     @JsonProperty("exchange")
-    public String exchange;
+    private String exchange;
 
     @JsonProperty("name")
-    public String name;
+    private String name;
 
     @JsonProperty("action_pt")
-    public String actionPt;
+    private String actionPt;
 
     @JsonProperty("action_company")
-    public String actionCompany;
+    private String actionCompany;
 
     @JsonProperty("ptpo")
-    public String ptpo;
+    private String ptpo;
 
     @JsonProperty("analyst")
-    public String analyst;
+    private String analyst;
 
     @JsonProperty("rating_current")
-    public String ratingCurrent;
+    private String ratingCurrent;
 
     @JsonProperty("pt_current")
-    public String ptCurrent;
+    private Float ptCurrent;
 
     @JsonProperty("rating_prior")
-    public String ratingPrior;
+    private String ratingPrior;
 
     @JsonProperty("pt_prior")
-    public String ptPrior;
+    private Float ptPrior;
 
     @JsonProperty("url")
-    public String url;
+    private String url;
 
     @JsonProperty("importance")
-    public String importance;
+    private String importance;
 
     @JsonProperty("updated")
-    public String updated;
+    private long updated;
 
 
     public String getId() {
@@ -98,11 +112,11 @@ public class BenzingaRating {
         this.id = id;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -122,11 +136,11 @@ public class BenzingaRating {
         this.urlNews = urlNews;
     }
 
-    public String getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
 
@@ -194,11 +208,11 @@ public class BenzingaRating {
         this.ratingCurrent = ratingCurrent;
     }
 
-    public String getPtCurrent() {
+    public Float getPtCurrent() {
         return ptCurrent;
     }
 
-    public void setPtCurrent(String ptCurrent) {
+    public void setPtCurrent(Float ptCurrent) {
         this.ptCurrent = ptCurrent;
     }
 
@@ -210,11 +224,11 @@ public class BenzingaRating {
         this.ratingPrior = ratingPrior;
     }
 
-    public String getPtPrior() {
+    public Float getPtPrior() {
         return ptPrior;
     }
 
-    public void setPtPrior(String ptPrior) {
+    public void setPtPrior(Float ptPrior) {
         this.ptPrior = ptPrior;
     }
 
@@ -234,11 +248,11 @@ public class BenzingaRating {
         this.importance = importance;
     }
 
-    public String getUpdated() {
+    public long getUpdated() {
         return updated;
     }
 
-    public void setUpdated(String updated) {
+    public void setUpdated(long updated) {
         this.updated = updated;
     }
 

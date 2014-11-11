@@ -23,6 +23,11 @@ public class BenzingaServiceTest {
 
     @Test
     public void should_update_range_ratings() {
-        benzingaService.updateRatings(LocalDate.of(2014, 11, 1), LocalDate.of(2014, 11, 7));
+        benzingaService.updateRatings(LocalDate.of(2014, 11, 3), LocalDate.of(2014, 11, 3));
+    }
+
+    @Test
+    public void should_update_latest() {
+        benzingaService.updateRatings();
     }
 }

@@ -2,7 +2,6 @@ package org.itrade;
 
 import org.itrade.benzinga.RatingRefresherJob;
 import org.itrade.jobs.AutowiringSpringBeanJobFactory;
-import org.itrade.jobs.ExampleService;
 import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +68,6 @@ public class QuartzConfiguration {
 
     @Bean
     public Properties quartzProperties() {
-        logger.info("== INFO ===");
-        logger.debug("== DEBUG ===");
-        logger.warn("== WARN ===");
         PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
         propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
         Properties properties = null;

@@ -46,4 +46,26 @@ public class RatingsResource {
         return Lists.newArrayList(as);
     }
 
+    public long getLatestTimestamp() {
+        Iterable<BenzingaRating> as = getRatingCollection().find("{}")
+                .sort("{updated: -1}").limit(1).as(BenzingaRating.class);
+        List<BenzingaRating> benzingaRatings = Lists.newArrayList(as);
+
+        if (benzingaRatings.size() == 0) {
+            return -1;
+        }
+        return benzingaRatings.get(0).getUpdated();
+    }
+
+    public void setMongo(Mongo mongo) {
+        this.mongo = mongo;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
 }

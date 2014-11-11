@@ -6,7 +6,7 @@ mongo:
     host: "localhost"
 
   db:
-    name: "itProvider"
+    name: "provider"
     collection:
       ratings: "ratings"
 
@@ -17,4 +17,4 @@ benzinga:
 #quartz:
 #  job:
 #    rating:
-#      cron: "*/20 * * * * ?"
+#      cron: "0 */2 * * * ?"

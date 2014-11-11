@@ -16,6 +16,7 @@
     <properties>
         <it.commons-version>0.0.1-SNAPSHOT</it.commons-version>
         <start-class>org.itrade.ProviderApplication</start-class>
+        <jackson.version>2.4.0</jackson.version>
     </properties>
 
     <dependencies>
@@ -34,6 +35,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>

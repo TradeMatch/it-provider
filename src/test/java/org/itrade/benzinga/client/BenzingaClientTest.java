@@ -27,10 +27,10 @@ public class BenzingaClientTest {
 
     @Test
     public void should_call_benzinga_ratings_api() {
-        BenzingaRatings ratings = benzingaClient.getRatings(LocalDate.now(), LocalDate.now());
+        BenzingaRatings ratings = benzingaClient.getRatings(LocalDate.of(2014, 11, 7), LocalDate.of(2014, 11, 7));
 
         assertThat(ratings.getRatings(), notNullValue());
-        assertThat(ratings.getRatings().size(), equalTo(10));
+        assertThat(ratings.getRatings().size(), equalTo(50));
 
         System.out.println(ratings);
     }

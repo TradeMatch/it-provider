@@ -32,7 +32,9 @@ public class BenzingaClient {
 
     @Autowired
     private TokenResolver tokenResolver;
-    private ObjectMapper mapper;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     interface CalendarMethods {
         String ratings = "ratings";
@@ -49,17 +51,32 @@ public class BenzingaClient {
         builder = UriComponentsBuilder.fromHttpUrl(benzingaCalendarUrl)
                 .queryParam("parameters[date_from]", "{date_from}")
                 .queryParam("parameters[date_to]", "{date_to}")
+                .queryParam("parameters[updated]", "{updated}")
                 .queryParam("token", token)
                 .queryParam("pagesize", pageSize)
                 .queryParam("page", "{page}")
                 .build();
         prepareHeaders();
-        mapper = new ObjectMapper();
     }
 
     private void prepareHeaders() {
         headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    }
+
+    public BenzingaRatings getRatings(long startTimestamp) {
+        BenzingaRatings resultRatings = new BenzingaRatings();
+
+        int page = 0;
+        BenzingaRatings ratings;
+        do {
+            String response = getRatingsInternal(null, null, startTimestamp, page++);
+            ratings = deserialize(response);
+            logger.debug(" page {}: {} ratings", page, ratings.getRatings().size());
+            resultRatings.getRatings().addAll(ratings.getRatings());
+        } while (ratings.getRatings().size() == pageSize && page < 10);
+
+        return resultRatings;
     }
 
     public BenzingaRatings getRatings(LocalDate from, LocalDate to) {
@@ -68,26 +85,28 @@ public class BenzingaClient {
         int page = 0;
         BenzingaRatings ratings;
         do {
-            ratings = getRatingsInternal(from, to, page++);
+            String response = getRatingsInternal(from, to, -1, page++);
+            ratings = deserialize(response);
             logger.debug(" page {}: {} ratings", page, ratings.getRatings().size());
             resultRatings.getRatings().addAll(ratings.getRatings());
-        } while (ratings.getRatings().size() == pageSize);
+        } while (ratings.getRatings().size() == pageSize && page < 10);
 
         return resultRatings;
     }
 
-    protected BenzingaRatings getRatingsInternal(LocalDate from, LocalDate to, int page) {
+    protected String getRatingsInternal(LocalDate from, LocalDate to, long startTimestamp, int page) {
         HashMap<String, String> params = new HashMap<>();
         params.put("method", CalendarMethods.ratings);
-        params.put("date_from", from.format(DateTimeFormatter.ISO_DATE));
-        params.put("date_to", to.format(DateTimeFormatter.ISO_DATE));
+        params.put("date_from", from != null ? from.format(DateTimeFormatter.ISO_DATE) : "");
+        params.put("date_to", to != null ? to.format(DateTimeFormatter.ISO_DATE): "");
         params.put("page", String.valueOf(page));
+        params.put("updated", startTimestamp != -1 ? String.valueOf(startTimestamp) : "");
 
         URI uri = builder.expand(params).toUri();
         HttpEntity<String> response = restTemplate.exchange(
                 uri, HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
-        return deserialize(response.getBody());
+        return response.getBody();
     }
 
     private BenzingaRatings deserialize(String json) {
@@ -98,7 +117,7 @@ public class BenzingaClient {
         }
 
         try {
-            return mapper.readValue(json, BenzingaRatings.class);
+            return objectMapper.readValue(json, BenzingaRatings.class);
         } catch (IOException e) {
             throw new BenzingaException("Benzinga response cannot be converted to object", e);
         }
