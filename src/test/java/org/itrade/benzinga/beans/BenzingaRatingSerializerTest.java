@@ -23,7 +23,7 @@ public class BenzingaRatingSerializerTest {
     }
 
     @Test
-    public void should_deserialize_ratings_json() throws IOException, URISyntaxException {
+    public void should_serialize_ratings_json() throws IOException, URISyntaxException {
         String json = new String(Files.readAllBytes(Paths.get(ClassLoader.getSystemResource("ratings-test.json").toURI())));
         BenzingaRatings benzingaRatings = objectMapper.readValue(json, BenzingaRatings.class);
         assertThat(benzingaRatings, notNullValue());

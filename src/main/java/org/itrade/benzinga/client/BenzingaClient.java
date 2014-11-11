@@ -30,18 +30,19 @@ public class BenzingaClient {
     private static final String benzingaCalendarUrl = "http://api.benzinga.com/api/v2/calendar/{method}";
     private int pageSize = 50;
 
+    interface CalendarMethods {
+        String ratings = "ratings";
+    }
+
     @Autowired
     private TokenResolver tokenResolver;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    interface CalendarMethods {
-        String ratings = "ratings";
-    }
-
     @Autowired
     private RestTemplate restTemplate;
+
     private UriComponents builder;
     private HttpHeaders headers;
 
