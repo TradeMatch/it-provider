@@ -58,7 +58,7 @@ public class ProviderController {
         if (from == null)
             from = LocalDate.now();
         if (to == null)
-            from = LocalDate.now();
+            to = LocalDate.now();
         logger.debug("From {}, to {}", from, to);
 
         int updated = benzingaService.updateRatings(from, to);
