@@ -39,14 +39,16 @@ public class BenzingaService {
      * @return number of updated ratings
      */
     public int updateRatings() {
+        logger.debug("Looking for latest timestamp...");
         long latestTimestamp = ratingsResource.getLatestTimestamp();
-        logger.info("Refresh Benzinga ratings starting at timestamp {}", latestTimestamp+1);
 
         // If no latest timestamp found, update last day
         if (latestTimestamp == -1) {
+            logger.info("No latest timestamp found. Refreshing for today... {}", LocalDate.now());
             return updateRatings(LocalDate.now());
         }
 
+        logger.info("Refresh Benzinga ratings starting at timestamp {}", latestTimestamp+1);
         // Update starting from timestamp
         BenzingaRatings ratings = benzingaClient.getRatings(latestTimestamp+1);
         return insertToDb(ratings);

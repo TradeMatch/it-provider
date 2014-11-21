@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH:-/tmp}/logs/logistics-front.log</file>
+        <encoder>
+            <pattern>%date{yyyy/MM/dd HH:mm:ss.SSS,Europe/Paris} %5level [%thread] %logger{16} - %message%n%throwable{short}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH:-/tmp}/logs/logistics-front.log%d{-yyyyMMdd}</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
     <logger name="org.springframework.web" level="INFO"/>
     <logger name="org.itrade" level="DEBUG"/>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="logfile" />
     </root>
 </configuration>

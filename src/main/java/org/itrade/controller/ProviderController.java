@@ -2,11 +2,9 @@ package org.itrade.controller;
 
 import org.itrade.benzinga.BenzingaService;
 import org.itrade.benzinga.beans.BenzingaRating;
-import org.itrade.benzinga.resource.RatingsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,13 +53,18 @@ public class ProviderController {
         if (toStr != null)
             to = LocalDate.parse(toStr);
 
-        if (from == null)
-            from = LocalDate.now();
-        if (to == null)
-            to = LocalDate.now();
-        logger.debug("From {}, to {}", from, to);
+        int updated = 0;
+        if (from == null && to == null) {
+            updated = benzingaService.updateRatings();
+        } else {
+            if (from == null)
+                from = LocalDate.now();
+            if (to == null)
+                to = LocalDate.now();
+            logger.debug("From {}, to {}", from, to);
 
-        int updated = benzingaService.updateRatings(from, to);
+            updated = benzingaService.updateRatings(from, to);
+        }
         return "Ratings updated: " + updated;
     }
 

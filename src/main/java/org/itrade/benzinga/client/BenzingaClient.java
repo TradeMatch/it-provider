@@ -104,9 +104,9 @@ public class BenzingaClient {
         params.put("updated", startTimestamp != -1 ? String.valueOf(startTimestamp) : "");
 
         URI uri = builder.expand(params).toUri();
+        logger.debug(" call {}", uri.toString());
         HttpEntity<String> response = restTemplate.exchange(
                 uri, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-
         return response.getBody();
     }
 
