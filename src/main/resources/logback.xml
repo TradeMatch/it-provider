@@ -3,7 +3,7 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH:-/tmp}/logs/logistics-front.log</file>
+        <file>${LOG_PATH:-/tmp}/it-provider.log</file>
         <encoder>
             <pattern>%date{yyyy/MM/dd HH:mm:ss.SSS,Europe/Paris} %5level [%thread] %logger{16} - %message%n%throwable{short}</pattern>
         </encoder>
@@ -11,7 +11,7 @@
             <level>DEBUG</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH:-/tmp}/logs/logistics-front.log%d{-yyyyMMdd}</fileNamePattern>
+            <fileNamePattern>${LOG_PATH:-/tmp}/it-provider.log%d{-yyyyMMdd}</fileNamePattern>
         </rollingPolicy>
     </appender>
 
