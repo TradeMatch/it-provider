@@ -2,6 +2,8 @@ package org.itrade.yahoo.client;
 
 import org.itrade.yahoo.YahooException;
 import org.itrade.yahoo.beans.HistoricalData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class YahooFinanceClient {
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final String baseUrl = "http://query.yahooapis.com/v1/public/yql";
     private static final String query = "select * from yahoo.finance.historicaldata where symbol in ({symbols}) and startDate=\"{date_from}\" and endDate=\"{date_to}\"";
@@ -72,9 +74,10 @@ public class YahooFinanceClient {
         return builder.expand(params).toUri();
     }
 
-    public HistoricalData getHistoricalData(ArrayList<String> symbols, LocalDate from, LocalDate to) {
+    public HistoricalData getHistoricalData(List<String> symbols, LocalDate from, LocalDate to) {
         URI uri = prepareUri(symbols, from, to);
 
+        logger.debug("Call '{}'", uri.toString());
         HttpEntity<HistoricalData> response = restTemplate.exchange(
                 uri, HttpMethod.GET, new HttpEntity<>(headers), HistoricalData.class);
 

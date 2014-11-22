@@ -19,12 +19,12 @@ public class TickersResourceTest {
         tickersResource = new TickersResource();
         tickersResource.setMongo(mongoClient);
         tickersResource.setDbName("provider");
-        tickersResource.setCollection("nasdaq");
+        tickersResource.setNasdaqCollection("nasdaq");
     }
 
     @Test
     public void should_return_latest_timestamp() {
-        List<Ticker> tickers = tickersResource.getTickers(0, 0);
+        List<Ticker> nasdaqTickers = tickersResource.getNasdaqTickers(0, 0);
 
     }
 

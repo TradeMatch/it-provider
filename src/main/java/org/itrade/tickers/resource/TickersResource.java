@@ -2,7 +2,6 @@ package org.itrade.tickers.resource;
 
 import com.google.common.collect.Lists;
 import com.mongodb.Mongo;
-import org.itrade.benzinga.beans.BenzingaRating;
 import org.itrade.tickers.beans.Ticker;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -29,7 +28,7 @@ public class TickersResource {
     private String dbName;
 
     @Value("${mongo.db.collection.nasdaq:nasdaq}")
-    private String collection;
+    private String collectionNasdaq;
 
     @PostConstruct
     private void init() {
@@ -37,12 +36,12 @@ public class TickersResource {
         //getCollection().ensureIndex("{Symbol: 1}", "{background: true}");
     }
 
-    private MongoCollection getCollection() {
-        return (new Jongo(mongo.getDB(this.dbName))).getCollection(this.collection);
+    private MongoCollection getNasdaqCollection() {
+        return (new Jongo(mongo.getDB(this.dbName))).getCollection(this.collectionNasdaq);
     }
 
-    public List<Ticker> getTickers(int offset, int limit) {
-        Iterable<Ticker> as = getCollection().find().skip(offset).limit(limit).as(Ticker.class);
+    public List<Ticker> getNasdaqTickers(int offset, int limit) {
+        Iterable<Ticker> as = getNasdaqCollection().find().skip(offset).limit(limit).as(Ticker.class);
         return Lists.newArrayList(as);
     }
 
@@ -54,7 +53,7 @@ public class TickersResource {
         this.dbName = dbName;
     }
 
-    public void setCollection(String collection) {
-        this.collection = collection;
+    public void setNasdaqCollection(String collection) {
+        this.collectionNasdaq = collection;
     }
 }
