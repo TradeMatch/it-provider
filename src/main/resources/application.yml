@@ -17,4 +17,7 @@ benzinga:
 #quartz:
 #  job:
 #    rating:
-#      cron: "0 */2 * * * ?"
+#      cron: "0 */1 * * * ?"
+#
+#    yahoohistoric:
+#      cron: "30 */1 * * * ?"

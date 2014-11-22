@@ -1,4 +1,4 @@
-package org.itrade.benzinga;
+package org.itrade.yahoo;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -14,16 +14,16 @@ import org.springframework.stereotype.Service;
  * Job refreshing today's benzinga ratings
  */
 @Service
-public class RatingRefresherJob implements Job {
+public class YahooHistoricRefresherJob implements Job {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    public BenzingaService benzingaService;
+    private YahooService yahooService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        logger.debug("Fire RatingRefresherJob");
-        benzingaService.updateRatings();
+        logger.debug("Fire YahooHistoricRefresherJob");
+        yahooService.update();
     }
 
 }

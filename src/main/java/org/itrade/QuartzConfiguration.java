@@ -2,7 +2,8 @@ package org.itrade;
 
 import org.itrade.benzinga.RatingRefresherJob;
 import org.itrade.jobs.AutowiringSpringBeanJobFactory;
-import org.quartz.Trigger;
+import org.itrade.yahoo.YahooHistoricRefresherJob;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,29 +27,52 @@ public class QuartzConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Value("${quartz.job.rating.cron:0 0 8-18 * * ?}")
+    @Value("${quartz.job.rating.cron:0 0 7-22 * * ?}")
     private String ratingCron;
 
+    @Value("${quartz.job.yahoohistoric.cron:0 0 20 ? * MON-FRI}")
+    private String yahooHistoricCron;
+
     @Bean
-    public JobDetailFactoryBean jobDetailFactoryBean() {
+    public JobDetailFactoryBean jobRatingDetailFactoryBean() {
         JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
         jobDetailFactoryBean.setJobClass(RatingRefresherJob.class);
+        jobDetailFactoryBean.setName("RatingRefresher");
         jobDetailFactoryBean.setDurability(true);
-        jobDetailFactoryBean.setGroup("spring3-quartz");
+        jobDetailFactoryBean.setGroup("group-provider");
         return jobDetailFactoryBean;
     }
 
     @Bean
-    public CronTriggerFactoryBean cronTriggerFactoryBean() {
+    public CronTriggerFactoryBean cronRatingTriggerFactoryBean() {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
-        cronTriggerFactoryBean.setJobDetail(jobDetailFactoryBean().getObject());
+        cronTriggerFactoryBean.setJobDetail(jobRatingDetailFactoryBean().getObject());
         cronTriggerFactoryBean.setCronExpression(ratingCron);
-        cronTriggerFactoryBean.setGroup("spring3-quartz");
+        cronTriggerFactoryBean.setGroup("group-provider");
         return cronTriggerFactoryBean;
     }
 
     @Bean
-    public SchedulerFactoryBean quartzScheduler() {
+    public JobDetailFactoryBean jobYahooHistoricDetailFactoryBean() {
+        JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
+        jobDetailFactoryBean.setJobClass(YahooHistoricRefresherJob.class);
+        jobDetailFactoryBean.setName("YahooHistoricRefresher");
+        jobDetailFactoryBean.setDurability(true);
+        jobDetailFactoryBean.setGroup("group-provider");
+        return jobDetailFactoryBean;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean cronYahooHictoricTriggerFactoryBean() {
+        CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+        cronTriggerFactoryBean.setJobDetail(jobYahooHistoricDetailFactoryBean().getObject());
+        cronTriggerFactoryBean.setCronExpression(yahooHistoricCron);
+        cronTriggerFactoryBean.setGroup("group-provider");
+        return cronTriggerFactoryBean;
+    }
+
+    @Bean
+    public SchedulerFactoryBean quartzScheduler() throws SchedulerException {
         SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();
         quartzScheduler.setOverwriteExistingJobs(true);
         quartzScheduler.setSchedulerName("provider-ratings-scheduler");
@@ -60,13 +84,15 @@ public class QuartzConfiguration {
 
         quartzScheduler.setQuartzProperties(quartzProperties());
 
-        Trigger[] triggers = {cronTriggerFactoryBean().getObject()};
+        Trigger[] triggers = {
+                cronRatingTriggerFactoryBean().getObject(),
+                cronYahooHictoricTriggerFactoryBean().getObject(),
+        };
         quartzScheduler.setTriggers(triggers);
 
         return quartzScheduler;
     }
 
-    @Bean
     public Properties quartzProperties() {
         PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
         propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
