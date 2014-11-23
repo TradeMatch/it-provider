@@ -2,6 +2,7 @@ package org.itrade.controller;
 
 import org.itrade.benzinga.BenzingaService;
 import org.itrade.benzinga.beans.BenzingaRating;
+import org.itrade.yahoo.YahooService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class ProviderController {
 
     @Autowired
     private BenzingaService benzingaService;
+
+    @Autowired
+    private YahooService yahooService;
 
     @RequestMapping("/")
     public String index() {
@@ -53,7 +57,7 @@ public class ProviderController {
         if (toStr != null)
             to = LocalDate.parse(toStr);
 
-        int updated = 0;
+        int updated;
         if (from == null && to == null) {
             updated = benzingaService.updateRatings();
         } else {
@@ -66,6 +70,34 @@ public class ProviderController {
             updated = benzingaService.updateRatings(from, to);
         }
         return "Ratings updated: " + updated;
+    }
+
+    @RequestMapping("/update/historical")
+    public String updateHistoricalData(
+            @RequestParam(value = "from", required = false) final String fromStr,
+            @RequestParam(value = "to", required = false) final String toStr) {
+
+        LocalDate from = null;
+        LocalDate to = null;
+
+        if (fromStr != null)
+            from = LocalDate.parse(fromStr);
+        if (toStr != null)
+            to = LocalDate.parse(toStr);
+
+        int updated;
+        if (from == null && to == null) {
+            updated = yahooService.update();
+        } else {
+            if (from == null)
+                from = LocalDate.now();
+            if (to == null)
+                to = LocalDate.now();
+            logger.debug("From {}, to {}", from, to);
+
+            updated = yahooService.update(from, to);
+        }
+        return "Quites updated: " + updated;
     }
 
 }

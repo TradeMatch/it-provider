@@ -1,6 +1,7 @@
 
 package org.itrade.yahoo.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -21,6 +22,7 @@ import javax.annotation.Generated;
     "Symbol",
     "Volume"
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Quote {
 
     @JsonProperty("Adj_Close")

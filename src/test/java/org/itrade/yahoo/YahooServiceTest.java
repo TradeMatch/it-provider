@@ -17,7 +17,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @SpringApplicationConfiguration(classes = ProviderApplication.class)
 public class YahooServiceTest {
 
-    public static final int SIZE = 500;
     @Autowired
     private YahooService yahooService;
 
@@ -33,12 +32,12 @@ public class YahooServiceTest {
     @Test
     public void should_compute_partition_size() {
         int size = yahooService.computePartitionSize(LocalDate.of(2014, 10, 10), LocalDate.of(2014, 10, 10));
-        assertThat(size, equalTo(SIZE));
+        assertThat(size, equalTo(YahooService.SIZE));
         size = yahooService.computePartitionSize(LocalDate.of(2014, 10, 10), LocalDate.of(2014, 10, 11));
-        assertThat(size, equalTo(SIZE /2));
+        assertThat(size, equalTo(YahooService.SIZE /2));
         size = yahooService.computePartitionSize(LocalDate.of(2014, 10, 10), LocalDate.of(2014, 10, 12));
-        assertThat(size, equalTo(SIZE /3));
+        assertThat(size, equalTo(YahooService.SIZE /3));
         size = yahooService.computePartitionSize(LocalDate.of(2014, 9, 30), LocalDate.of(2014, 10, 3));
-        assertThat(size, equalTo(SIZE /4));
+        assertThat(size, equalTo(YahooService.SIZE /4));
     }
 }

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class YahooService {
-    public static final int SIZE = 500;
+    public static final int SIZE = 100;
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -43,26 +43,26 @@ public class YahooService {
         logger.debug("Nb Tickers found: {}", nasdaqTickers.size());
     }
 
-    public void update() {
-        update(LocalDate.now(), LocalDate.now());
+    public int update() {
+        return update(LocalDate.now(), LocalDate.now());
     }
 
-    public void update(LocalDate from, LocalDate to) {
+    public int update(LocalDate from, LocalDate to) {
         List<String> symbols = nasdaqTickers.stream()
                 .map(Ticker::getSymbol)
                 .collect(Collectors.toList());
 
-        update(symbols, from, to);
+        return update(symbols, from, to);
     }
 
-    public void update(List<String> tickers, LocalDate from, LocalDate to) {
+    public int update(List<String> tickers, LocalDate from, LocalDate to) {
         logger.info("Updating historical data for {} tickers from {} to {} ...", tickers.size(), from, to);
 
         List<List<String>> partitionTickers = Lists.partition(tickers, computePartitionSize(from, to));
 
-        int size = 0;
+        int size = 0; int counter = 0;
         for (List<String> partitionTicker : partitionTickers) {
-            logger.debug("  updating {}/{} tickers from {} to {} ...", partitionTicker.size(), tickers.size(), from, to);
+            logger.debug(" updating {}/{} tickers from {} to {} ...", partitionTicker.size() * (++counter), tickers.size(), from, to);
             HistoricalData historicalData = yahooFinanceClient.getHistoricalData(partitionTicker, from, to);
 
             if (historicalData.getQuery().getResults() != null) {
@@ -76,6 +76,7 @@ public class YahooService {
         }
 
         logger.info("Quotes updated: {}", size);
+        return size;
     }
 
     public int computePartitionSize(LocalDate from, LocalDate to) {

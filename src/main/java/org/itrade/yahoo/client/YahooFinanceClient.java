@@ -77,7 +77,7 @@ public class YahooFinanceClient {
     public HistoricalData getHistoricalData(List<String> symbols, LocalDate from, LocalDate to) {
         URI uri = prepareUri(symbols, from, to);
 
-        logger.debug("Call '{}'", uri.toString());
+        logger.debug("  call '{}'", uri.toString());
         HttpEntity<HistoricalData> response = restTemplate.exchange(
                 uri, HttpMethod.GET, new HttpEntity<>(headers), HistoricalData.class);
 
