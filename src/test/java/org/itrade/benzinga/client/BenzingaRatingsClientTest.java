@@ -1,5 +1,6 @@
 package org.itrade.benzinga.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.itrade.benzinga.beans.BenzingaRatings;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,22 +13,23 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class BenzingaClientTest {
-    private BenzingaClient benzingaClient;
+public class BenzingaRatingsClientTest {
+    private BenzingaRatingsClient benzingaRatingsClient;
 
     @Before
     public void setUp() throws Exception {
-        benzingaClient = new BenzingaClient();
-        benzingaClient.setRestTemplate(new RestTemplate());
+        benzingaRatingsClient = new BenzingaRatingsClient();
+        benzingaRatingsClient.setRestTemplate(new RestTemplate());
         TokenResolver tokenResolver = new TokenResolver();
         tokenResolver.setFile(new File(System.getProperty("user.home") + "/benzinga.token"));
-        benzingaClient.setTokenResolver(tokenResolver);
-        benzingaClient.init();
+        benzingaRatingsClient.setTokenResolver(tokenResolver);
+        benzingaRatingsClient.init();
+        benzingaRatingsClient.setObjectMapper(new ObjectMapper());
     }
 
     @Test
     public void should_call_benzinga_ratings_api() {
-        BenzingaRatings ratings = benzingaClient.getRatings(LocalDate.of(2014, 11, 7), LocalDate.of(2014, 11, 7));
+        BenzingaRatings ratings = benzingaRatingsClient.getRatings(LocalDate.of(2014, 11, 7), LocalDate.of(2014, 11, 7));
 
         assertThat(ratings.getRatings(), notNullValue());
         assertThat(ratings.getRatings().size(), equalTo(50));

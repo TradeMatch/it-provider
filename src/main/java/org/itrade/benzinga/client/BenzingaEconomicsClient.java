@@ -3,7 +3,7 @@ package org.itrade.benzinga.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import org.itrade.benzinga.BenzingaException;
-import org.itrade.benzinga.beans.BenzingaRatings;
+import org.itrade.benzinga.beans.BenzingaEconomics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +24,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 @Service
-public class BenzingaClient {
+public class BenzingaEconomicsClient {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final String benzingaCalendarUrl = "http://api.benzinga.com/api/v2/calendar/{method}";
     private int pageSize = 50;
 
     interface CalendarMethods {
-        String ratings = "ratings";
+        String economics = "economics";
     }
 
     @Autowired
@@ -65,39 +65,39 @@ public class BenzingaClient {
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public BenzingaRatings getRatings(long startTimestamp) {
-        BenzingaRatings resultRatings = new BenzingaRatings();
+    public BenzingaEconomics getEconomics(long startTimestamp) {
+        BenzingaEconomics benzingaEconomics = new BenzingaEconomics();
 
         int page = 0;
-        BenzingaRatings ratings;
+        BenzingaEconomics economics;
         do {
-            String response = getRatingsInternal(null, null, startTimestamp, page++);
-            ratings = deserialize(response);
-            logger.debug(" page {}: {} ratings", page, ratings.getRatings().size());
-            resultRatings.getRatings().addAll(ratings.getRatings());
-        } while (ratings.getRatings().size() == pageSize && page < 10);
+            String response = getEconomicsInternal(null, null, startTimestamp, page++);
+            economics = deserialize(response);
+            logger.debug(" page {}: {} economics", page, economics.getEconomics().size());
+            benzingaEconomics.getEconomics().addAll(economics.getEconomics());
+        } while (economics.getEconomics().size() == pageSize && page < 10);
 
-        return resultRatings;
+        return benzingaEconomics;
     }
 
-    public BenzingaRatings getRatings(LocalDate from, LocalDate to) {
-        BenzingaRatings resultRatings = new BenzingaRatings();
+    public BenzingaEconomics getEconomics(LocalDate from, LocalDate to) {
+        BenzingaEconomics benzingaEconomics = new BenzingaEconomics();
 
         int page = 0;
-        BenzingaRatings ratings;
+        BenzingaEconomics economics;
         do {
-            String response = getRatingsInternal(from, to, -1, page++);
-            ratings = deserialize(response);
-            logger.debug(" page {}: {} ratings", page, ratings.getRatings().size());
-            resultRatings.getRatings().addAll(ratings.getRatings());
-        } while (ratings.getRatings().size() == pageSize && page < 10);
+            String response = getEconomicsInternal(from, to, -1, page++);
+            economics = deserialize(response);
+            logger.debug(" page {}: {} economics", page, economics.getEconomics().size());
+            benzingaEconomics.getEconomics().addAll(economics.getEconomics());
+        } while (economics.getEconomics().size() == pageSize && page < 10);
 
-        return resultRatings;
+        return benzingaEconomics;
     }
 
-    protected String getRatingsInternal(LocalDate from, LocalDate to, long startTimestamp, int page) {
+    protected String getEconomicsInternal(LocalDate from, LocalDate to, long startTimestamp, int page) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("method", CalendarMethods.ratings);
+        params.put("method", CalendarMethods.economics);
         params.put("date_from", from != null ? from.format(DateTimeFormatter.ISO_DATE) : "");
         params.put("date_to", to != null ? to.format(DateTimeFormatter.ISO_DATE): "");
         params.put("page", String.valueOf(page));
@@ -110,15 +110,14 @@ public class BenzingaClient {
         return response.getBody();
     }
 
-    private BenzingaRatings deserialize(String json) {
+    private BenzingaEconomics deserialize(String json) {
         if (json == null || json.equals("[]")) {
-            BenzingaRatings benzingaRatings = new BenzingaRatings();
-            benzingaRatings.setRatings(Lists.newArrayList());
-            return benzingaRatings;
+            BenzingaEconomics benzingaEconomics = new BenzingaEconomics();
+            return benzingaEconomics;
         }
 
         try {
-            return objectMapper.readValue(json, BenzingaRatings.class);
+            return objectMapper.readValue(json, BenzingaEconomics.class);
         } catch (IOException e) {
             throw new BenzingaException("Benzinga response cannot be converted to object", e);
         }
@@ -130,5 +129,9 @@ public class BenzingaClient {
 
     public void setTokenResolver(TokenResolver tokenResolver) {
         this.tokenResolver = tokenResolver;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 }

@@ -23,15 +23,18 @@ public class KafkaRatingClient {
     @Value("${kafka.rating.topic:ratings}")
     private String ratingTopic;
 
+    @Value("${kafka.active:false}")
+    private boolean active;
+
     public void sendRatings(List<BenzingaRating> ratings) {
         logger.info("Send to kafka: {}", ratings.size());
-        try {
-/*
-            ratings.forEach((rating) ->
-                    kafkaRatingProducer.send(new KeyedMessage<>(ratingTopic, rating.getTicker(), rating)));
-*/
-        } catch (Exception e) {
-            logger.error("Cannot send messages to kafka", e);
+        if (active) {
+            try {
+                ratings.forEach((rating) ->
+                        kafkaRatingProducer.send(new KeyedMessage<>(ratingTopic, rating.getTicker(), rating)));
+            } catch (Exception e) {
+                logger.error("Cannot send messages to kafka", e);
+            }
         }
     }
 

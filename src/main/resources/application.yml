@@ -14,6 +14,9 @@ benzinga:
   token:
     file: "/Users/dimapod/benzinga.token"
 
+kafka:
+  active: false
+
 #quartz:
 #  job:
 #    rating:

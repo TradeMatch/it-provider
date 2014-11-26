@@ -27,6 +27,11 @@ public class BenzingaServiceTest {
     }
 
     @Test
+    public void should_update_range_economics() {
+        benzingaService.updateEconomics(LocalDate.of(2014, 11, 3), LocalDate.of(2014, 11, 3));
+    }
+
+    @Test
     public void should_update_latest() {
         benzingaService.updateRatings();
     }

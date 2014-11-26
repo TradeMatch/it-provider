@@ -79,6 +79,34 @@ public class ProviderController {
         return "Ratings updated: " + updated;
     }
 
+    @RequestMapping("/update/economics")
+    public String updateEconomics(
+            @RequestParam(value = "from", required = false) final String fromStr,
+            @RequestParam(value = "to", required = false) final String toStr) {
+
+        LocalDate from = null;
+        LocalDate to = null;
+
+        if (fromStr != null)
+            from = LocalDate.parse(fromStr);
+        if (toStr != null)
+            to = LocalDate.parse(toStr);
+
+        int updated;
+        if (from == null && to == null) {
+            updated = benzingaService.updateEconomics();
+        } else {
+            if (from == null)
+                from = LocalDate.now();
+            if (to == null)
+                to = LocalDate.now();
+            logger.debug("From {}, to {}", from, to);
+
+            updated = benzingaService.updateEconomics(from, to);
+        }
+        return "Ratings updated: " + updated;
+    }
+
     @RequestMapping("/update/historical")
     public String updateHistoricalData(
             @RequestParam(value = "from", required = false) final String fromStr,
