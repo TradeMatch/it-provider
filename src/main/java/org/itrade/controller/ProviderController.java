@@ -1,7 +1,9 @@
 package org.itrade.controller;
 
+import kafka.producer.KeyedMessage;
 import org.itrade.benzinga.BenzingaService;
 import org.itrade.benzinga.beans.BenzingaRating;
+import org.itrade.benzinga.kafka.KafkaRatingProducer;
 import org.itrade.yahoo.YahooService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 public class ProviderController {
@@ -23,6 +27,9 @@ public class ProviderController {
 
     @Autowired
     private YahooService yahooService;
+
+    @Autowired
+    private KafkaRatingProducer kafkaRatingProducer;
 
     @RequestMapping("/")
     public String index() {
@@ -98,6 +105,26 @@ public class ProviderController {
             updated = yahooService.update(from, to);
         }
         return "Quites updated: " + updated;
+    }
+
+    @RequestMapping("/test")
+    public String kafkaTest() {
+        long events = 10;
+        Random rnd = new Random();
+
+        for (long nEvents = 0; nEvents < events; nEvents++) {
+            long runtime = new Date().getTime();
+            String ip = "192.168.2." + rnd.nextInt(255);
+            String msg = runtime + ",www.example.com," + ip;
+
+            BenzingaRating benzingaRating = new BenzingaRating();
+            benzingaRating.setTicker("AAPL");
+
+            KeyedMessage<String, BenzingaRating> data = new KeyedMessage<>("page_visits_1", ip, benzingaRating);
+            kafkaRatingProducer.send(data);
+        }
+
+        return "Kafka hello";
     }
 
 }

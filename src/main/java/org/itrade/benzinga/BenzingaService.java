@@ -3,6 +3,7 @@ package org.itrade.benzinga;
 import org.itrade.benzinga.beans.BenzingaRating;
 import org.itrade.benzinga.beans.BenzingaRatings;
 import org.itrade.benzinga.client.BenzingaClient;
+import org.itrade.benzinga.kafka.KafkaRatingClient;
 import org.itrade.benzinga.resource.RatingsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class BenzingaService {
 
     @Autowired
     private BenzingaClient benzingaClient;
+
+    @Autowired
+    private KafkaRatingClient kafkaRatingClient;
 
     public List<BenzingaRating> getRatings(int offset, int limit) {
         return ratingsResource.getRatings(offset, limit);
@@ -51,6 +55,7 @@ public class BenzingaService {
         logger.info("Refresh Benzinga ratings starting at timestamp {}", latestTimestamp+1);
         // Update starting from timestamp
         BenzingaRatings ratings = benzingaClient.getRatings(latestTimestamp+1);
+        kafkaRatingClient.sendRatings(ratings.getRatings());
         return insertToDb(ratings);
     }
 
@@ -63,6 +68,7 @@ public class BenzingaService {
     public int updateRatings(LocalDate localDate) {
         logger.info("Refresh Benzinga ratings for {}", localDate);
         BenzingaRatings ratings = benzingaClient.getRatings(localDate, localDate);
+        kafkaRatingClient.sendRatings(ratings.getRatings());
         return insertToDb(ratings);
     }
 
@@ -92,9 +98,10 @@ public class BenzingaService {
             ratingsResource.upsertRatings(ratings.getRatings());
             logger.debug(" ... done", ratings.getRatings().size());
         } else {
-            logger.debug("No benzinga ratings found");
+            logger.debug("No benzinga ratings to DB upsert");
         }
         return ratings.getRatings().size();
     }
+
 
 }
