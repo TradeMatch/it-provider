@@ -15,6 +15,7 @@ mongo:
 benzinga:
   token:
     file: "/Users/dimapod/benzinga.token"
+#   file: "/usr/local/bin/itrade/it-provider/config/benzinga.token"
 
 kafka:
   active: false
