@@ -3,12 +3,14 @@ server:
 
 mongo:
   configuration:
-    host: "localhost"
+    host: localhost
+    user: it-provider
+    password: "!it-provider"
 
   db:
-    name: "provider"
+    name: provider
     collection:
-      ratings: "ratings"
+      ratings: ratings
 
 benzinga:
   token:
