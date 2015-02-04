@@ -2,6 +2,7 @@ package org.itrade;
 
 import org.itrade.benzinga.RatingRefresherJob;
 import org.itrade.jobs.AutowiringSpringBeanJobFactory;
+import org.itrade.nasdaq.NasdaqRefresherJob;
 import org.itrade.yahoo.YahooHistoricRefresherJob;
 import org.quartz.*;
 import org.slf4j.Logger;
@@ -33,6 +34,10 @@ public class QuartzConfiguration {
     @Value("${quartz.job.yahoohistoric.cron:0 0 20 ? * MON-FRI}")
     private String yahooHistoricCron;
 
+    @Value("${quartz.job.nasdaq.cron:0 0 21 ? * MON-FRI}")
+    private String nasdaqCron;
+
+    // Benzinga Ratings
     @Bean
     public JobDetailFactoryBean jobRatingDetailFactoryBean() {
         JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
@@ -52,6 +57,7 @@ public class QuartzConfiguration {
         return cronTriggerFactoryBean;
     }
 
+    // Yahoo Historical data
     @Bean
     public JobDetailFactoryBean jobYahooHistoricDetailFactoryBean() {
         JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
@@ -67,6 +73,26 @@ public class QuartzConfiguration {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         cronTriggerFactoryBean.setJobDetail(jobYahooHistoricDetailFactoryBean().getObject());
         cronTriggerFactoryBean.setCronExpression(yahooHistoricCron);
+        cronTriggerFactoryBean.setGroup("group-provider");
+        return cronTriggerFactoryBean;
+    }
+
+    // Nasdaq Companies
+    @Bean
+    public JobDetailFactoryBean jobNasdaqDetailFactoryBean() {
+        JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
+        jobDetailFactoryBean.setJobClass(NasdaqRefresherJob.class);
+        jobDetailFactoryBean.setName("NasdaqHistoricRefresher");
+        jobDetailFactoryBean.setDurability(true);
+        jobDetailFactoryBean.setGroup("group-provider");
+        return jobDetailFactoryBean;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean cronNasdaqTriggerFactoryBean() {
+        CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+        cronTriggerFactoryBean.setJobDetail(jobNasdaqDetailFactoryBean().getObject());
+        cronTriggerFactoryBean.setCronExpression(nasdaqCron);
         cronTriggerFactoryBean.setGroup("group-provider");
         return cronTriggerFactoryBean;
     }
