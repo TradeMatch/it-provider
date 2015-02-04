@@ -1,4 +1,4 @@
-package org.itrade.yahoo;
+package org.itrade.nasdaq;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -10,20 +10,20 @@ import org.springframework.stereotype.Service;
 
 /**
  * Created by Dmytro Podyachiy on 08/11/14.
- *
- * Job refreshing today's Yahoo historical data
+ * <p>
+ * Job refreshing today's Nasdaq companies
  */
 @Service
-public class YahooHistoricRefresherJob implements Job {
+public class NasdaqRefresherJob implements Job {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private YahooService yahooService;
+    private NasdaqService nasdaqService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        logger.debug("Fire YahooHistoricRefresherJob");
-        yahooService.update();
+        logger.debug("Fire NasdaqRefresherJob");
+        nasdaqService.update();
     }
 
 }
