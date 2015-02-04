@@ -4,6 +4,7 @@ import kafka.producer.KeyedMessage;
 import org.itrade.benzinga.BenzingaService;
 import org.itrade.benzinga.beans.BenzingaRating;
 import org.itrade.benzinga.kafka.KafkaRatingProducer;
+import org.itrade.nasdaq.NasdaqService;
 import org.itrade.yahoo.YahooService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ public class ProviderController {
 
     @Autowired
     private YahooService yahooService;
+
+    @Autowired
+    private NasdaqService nasdaqService;
 
     @Autowired
     private KafkaRatingProducer kafkaRatingProducer;
@@ -133,6 +137,12 @@ public class ProviderController {
             updated = yahooService.update(from, to);
         }
         return "Quites updated: " + updated;
+    }
+
+    @RequestMapping("/update/nasdaq")
+    public String updateNasdaqCompanies() {
+        int updated = nasdaqService.update();
+        return "Nasdaq companies updated: " + updated;
     }
 
     @RequestMapping("/test")
